@@ -1,0 +1,95 @@
+{
+  "name": "n8n-nodes-berachain",
+  "version": "1.0.0",
+  "description": "A comprehensive n8n community node for Berachain Proof of Liquidity L1 blockchain providing 23 resources and 200+ operations for DeFi automation, BGT governance, HONEY stablecoin, validators, and native protocol interactions.",
+  "license": "BUSL-1.1",
+  "author": {
+    "name": "Velocity BPA",
+    "email": "licensing@velobpa.com",
+    "url": "https://velobpa.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Velocity-BPA/n8n-nodes-berachain.git"
+  },
+  "homepage": "https://github.com/Velocity-BPA/n8n-nodes-berachain#readme",
+  "bugs": {
+    "url": "https://github.com/Velocity-BPA/n8n-nodes-berachain/issues"
+  },
+  "keywords": [
+    "n8n",
+    "n8n-community-node-package",
+    "berachain",
+    "proof-of-liquidity",
+    "bgt",
+    "honey",
+    "bera",
+    "defi",
+    "blockchain",
+    "web3",
+    "ethereum",
+    "evm",
+    "polaris",
+    "bex",
+    "bend",
+    "berps",
+    "validators",
+    "staking",
+    "governance"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/BerachainNetwork.credentials.js",
+      "dist/credentials/BerachainApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Berachain/Berachain.node.js",
+      "dist/nodes/Berachain/BerachainTrigger.node.js"
+    ]
+  },
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"**/*.ts\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.1",
+    "gulp": "^4.0.2",
+    "jest": "^29.7.0",
+    "n8n-workflow": "^1.24.0",
+    "prettier": "^3.2.4",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "axios": "^1.6.5",
+    "ethers": "^6.10.0",
+    "graphql-request": "^6.1.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": ">=1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
