@@ -1,487 +1,221 @@
 # n8n-nodes-berachain
 
-**Comprehensive Berachain Proof of Liquidity blockchain integration for n8n**
+> **[Velocity BPA Licensing Notice]**
+>
+> This n8n node is licensed under the Business Source License 1.1 (BSL 1.1).
+>
+> Use of this node by for-profit organizations in production environments requires a commercial license from Velocity BPA.
+>
+> For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-[![License: BSL 1.1](https://img.shields.io/badge/License-BSL%201.1-blue.svg)](LICENSE)
-[![n8n Community Node](https://img.shields.io/badge/n8n-community%20node-orange)](https://n8n.io)
+The official n8n community node for Berachain, providing 4 comprehensive resources for automating BGT governance, Honey stablecoin operations, validator management, and DeFi protocols on the Berachain blockchain.
 
-## License Notice
+![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
+![License](https://img.shields.io/badge/license-BSL--1.1-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
+![Berachain](https://img.shields.io/badge/Berachain-Supported-orange)
+![BGT](https://img.shields.io/badge/BGT-Governance-green)
+![Honey](https://img.shields.io/badge/Honey-Stablecoin-yellow)
 
-This software is licensed under the **Business Source License 1.1 (BSL 1.1)**.
+## Features
 
-- **Free for non-commercial use**
-- **Commercial use requires a license from Velocity BPA**
-- **Converts to Apache 2.0 on January 1, 2028**
-
-See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LICENSING_FAQ.md](LICENSING_FAQ.md) for details.
-
-**For commercial licensing inquiries, contact Velocity BPA.**
-
----
-
-## Overview
-
-This n8n community node provides deep integration with the **Berachain** blockchain ecosystem, including its unique **Proof of Liquidity (PoL)** consensus mechanism. It supports all major Berachain protocols:
-
-- **BGT** - Bera Governance Token (non-transferable, earned through PoL)
-- **HONEY** - Overcollateralized stablecoin
-- **BEX** - Native decentralized exchange
-- **Bend** - Lending protocol
-- **Berps** - Perpetuals trading
-- **Infrared** - Liquid staking (iBGT)
-- **Reward Vaults** - LP staking for BGT rewards
-- **Validators & Gauges** - BGT emission governance
+- **BGT Governance** - Vote on proposals, delegate stakes, and manage governance participation
+- **Honey Stablecoin Operations** - Mint, redeem, and monitor Honey stablecoin transactions
+- **Validator Management** - Automate validator operations, monitor performance, and handle delegations
+- **DeFi Protocol Integration** - Interact with Berachain's native DeFi protocols and liquidity pools
+- **Real-time Monitoring** - Track blockchain events, validator status, and governance activities
+- **Multi-chain Support** - Compatible with Berachain testnet and mainnet environments
+- **Advanced Error Handling** - Comprehensive error management with detailed logging
+- **Flexible Authentication** - Secure API key-based authentication for all operations
 
 ## Installation
 
-### Via n8n Community Nodes
+### Community Nodes (Recommended)
 
-1. Open your n8n instance
-2. Go to **Settings** > **Community Nodes**
-3. Select **Install**
+1. Open n8n
+2. Go to **Settings** → **Community Nodes**
+3. Click **Install a community node**
 4. Enter `n8n-nodes-berachain`
 5. Click **Install**
 
 ### Manual Installation
 
 ```bash
-# Navigate to your n8n custom nodes directory
-cd ~/.n8n/custom
-
-# Clone or copy the package
+cd ~/.n8n
 npm install n8n-nodes-berachain
 ```
 
 ### Development Installation
 
 ```bash
-git clone https://github.com/velocitybpa/n8n-nodes-berachain.git
+git clone https://github.com/Velocity-BPA/n8n-nodes-berachain.git
 cd n8n-nodes-berachain
 npm install
 npm run build
-npm link
-
-# In your n8n directory
-npm link n8n-nodes-berachain
+mkdir -p ~/.n8n/custom
+ln -s $(pwd) ~/.n8n/custom/n8n-nodes-berachain
+n8n start
 ```
 
-## Configuration
+## Credentials Setup
 
-### Credentials
-
-#### Berachain Network (Required)
-
-Configure your connection to Berachain:
-
-| Field | Description |
-|-------|-------------|
-| Network | Select `Mainnet`, `Bartio Testnet`, or `Custom` |
-| Custom RPC URL | Your RPC endpoint (for custom network) |
-| WebSocket URL | Optional WebSocket for real-time events |
-| Private Key | Optional, required for write operations |
-| Beratrail API Key | Optional, for enhanced data access |
-
-#### Berachain API (Optional)
-
-For subgraph and advanced analytics:
-
-| Field | Description |
-|-------|-------------|
-| Environment | Mainnet or Testnet |
-| Subgraph API Key | For querying Berachain subgraphs |
-| Custom Subgraph URL | Override default subgraph endpoints |
-
-## Nodes
-
-### Berachain Node
-
-The main node with 23 resource categories and 130+ operations.
-
-### Berachain Trigger
-
-Real-time event triggers for blockchain events.
+| Field | Description | Required |
+|-------|-------------|----------|
+| API Key | Your Berachain API key for authentication | Yes |
+| Network | Target network (testnet/mainnet) | Yes |
+| Wallet Address | Your wallet address for operations | Yes |
+| Private Key | Private key for transaction signing (encrypted) | Yes |
 
 ## Resources & Operations
 
-### Account
-- `getBalance` - Get native BERA balance
-- `getTokenBalances` - Get all token balances
-- `getTransactionCount` - Get nonce
-- `getAccountInfo` - Comprehensive account data
-- `getBgtBalance` - Get BGT balance and details
-- `getBoosts` - Get active BGT boosts
-- `estimateGas` - Estimate gas for transaction
+### 1. BGT Governance
 
-### Transaction
-- `sendBera` - Send native BERA
-- `sendTransaction` - Send custom transaction
-- `getTransaction` - Get transaction by hash
-- `getReceipt` - Get transaction receipt
-- `waitForTransaction` - Wait for confirmation
-- `getGasPrice` - Get current gas price
-- `getFeeData` - Get comprehensive fee data
+| Operation | Description |
+|-----------|-------------|
+| Get Proposals | Retrieve active and historical governance proposals |
+| Vote on Proposal | Cast votes on governance proposals |
+| Delegate Stake | Delegate BGT tokens to validators |
+| Get Voting Power | Check current voting power and delegations |
+| Create Proposal | Submit new governance proposals |
+| Get Proposal Details | Retrieve detailed information about specific proposals |
 
-### BERA
-- `getBalance` - Get BERA balance
-- `transfer` - Transfer BERA
-- `wrap` - Wrap BERA to WBERA
-- `unwrap` - Unwrap WBERA to BERA
-- `getWberaBalance` - Get WBERA balance
+### 2. Honey Stablecoin
 
-### BGT (Bera Governance Token)
-- `getBalance` - Get BGT balance
-- `getBalances` - Get detailed BGT info
-- `getBoosts` - Get boost information
-- `queueBoost` - Queue BGT for boosting
-- `activateBoost` - Activate queued boost
-- `cancelBoost` - Cancel queued boost
-- `dropBoost` - Drop active boost
-- `delegate` - Delegate voting power
-- `getDelegate` - Get current delegate
-- `getVotes` - Get voting power
+| Operation | Description |
+|-----------|-------------|
+| Mint Honey | Mint new Honey stablecoins using collateral |
+| Redeem Honey | Redeem Honey tokens for underlying collateral |
+| Get Balance | Check Honey token balance for addresses |
+| Transfer Honey | Send Honey tokens between addresses |
+| Get Collateral Ratio | Monitor collateralization ratios |
+| Get Minting History | Retrieve historical minting and redemption data |
 
-### HONEY (Stablecoin)
-- `getBalance` - Get HONEY balance
-- `getStats` - Get HONEY protocol stats
-- `getMintRate` - Get current mint rate
-- `getRedeemRate` - Get current redeem rate
-- `previewMint` - Preview mint output
-- `previewRedeem` - Preview redeem output
-- `mint` - Mint HONEY with collateral
-- `redeem` - Redeem HONEY for collateral
-- `getCollateralBasket` - Get supported collaterals
+### 3. Validator Operations
 
-### Validator
-- `getActiveValidators` - List active validators
-- `getValidatorInfo` - Get validator details
-- `getCuttingBoard` - Get validator's cutting board
-- `getValidatorWeight` - Get validator BGT weight
-- `getBgtPerBlock` - Get BGT emission rate
+| Operation | Description |
+|-----------|-------------|
+| Get Validator Info | Retrieve validator details and performance metrics |
+| Register Validator | Register a new validator on the network |
+| Update Validator | Update validator configuration and metadata |
+| Get Delegations | View delegations to specific validators |
+| Claim Rewards | Claim validator and delegation rewards |
+| Monitor Status | Check validator online status and performance |
 
-### Reward Vault
-- `getVaults` - List reward vaults
-- `getVaultInfo` - Get vault details
-- `stake` - Stake tokens in vault
-- `unstake` - Unstake tokens from vault
-- `getStake` - Get staked balance
-- `claimRewards` - Claim BGT rewards
-- `getEarned` - Get pending rewards
-- `getApy` - Get vault APY
+### 4. DeFi Automation
 
-### Cutting Board
-- `getConfig` - Get cutting board config
-- `getDistribution` - Get reward distribution
-- `getWeights` - Get vault weights
+| Operation | Description |
+|-----------|-------------|
+| Add Liquidity | Add liquidity to Berachain DEX pools |
+| Remove Liquidity | Remove liquidity from pools |
+| Swap Tokens | Execute token swaps on native DEX |
+| Get Pool Info | Retrieve liquidity pool information and stats |
+| Stake Tokens | Stake tokens in yield farming protocols |
+| Harvest Rewards | Collect farming and staking rewards |
+| Get Portfolio | View complete DeFi portfolio summary |
 
-### Gauge
-- `getGauges` - List all gauges
-- `getGaugeInfo` - Get gauge details
-- `getWeight` - Get gauge weight
-- `getVotingConfig` - Get voting configuration
+## Usage Examples
 
-### BEX (DEX)
-- `getPools` - List liquidity pools
-- `getPoolInfo` - Get pool details
-- `getQuote` - Get swap quote
-- `swap` - Execute swap
-- `addLiquidity` - Add liquidity to pool
-- `removeLiquidity` - Remove liquidity
-- `getLpBalance` - Get LP token balance
-- `getReserves` - Get pool reserves
+### Vote on BGT Governance Proposal
 
-### Bend (Lending)
-- `getMarkets` - List lending markets
-- `getMarketInfo` - Get market details
-- `getUserPosition` - Get user's position
-- `supply` - Supply assets
-- `withdraw` - Withdraw assets
-- `borrow` - Borrow assets
-- `repay` - Repay borrowed assets
-- `getHealthFactor` - Get health factor
-
-### Berps (Perpetuals)
-- `getMarkets` - List perpetual markets
-- `getMarketInfo` - Get market details
-- `getPositions` - Get open positions
-- `openPosition` - Open new position
-- `closePosition` - Close position
-- `addMargin` - Add margin to position
-- `removeMargin` - Remove margin
-- `getFundingRate` - Get funding rate
-- `getVaultInfo` - Get Berps vault info
-- `depositToVault` - Deposit to vault
-- `withdrawFromVault` - Withdraw from vault
-
-### Contract
-- `call` - Call view function
-- `execute` - Execute state-changing function
-- `getCode` - Get contract bytecode
-- `isContract` - Check if address is contract
-
-### Token
-- `getInfo` - Get ERC20 token info
-- `getBalance` - Get token balance
-- `transfer` - Transfer tokens
-- `approve` - Approve spender
-- `getAllowance` - Get allowance
-
-### NFT
-- `getOwner` - Get NFT owner (ERC721)
-- `getBalance` - Get NFT balance (ERC721)
-- `getTokenUri` - Get token URI
-- `transfer` - Transfer NFT
-- `getBalance1155` - Get balance (ERC1155)
-
-### Block
-- `getLatestBlock` - Get latest block
-- `getBlockByNumber` - Get block by number
-- `getBlockNumber` - Get current block number
-- `getBlockWithTx` - Get block with transactions
-
-### Event
-- `getLogs` - Get raw event logs
-- `getContractLogs` - Get decoded contract logs
-
-### Governance
-- `getVotingPower` - Get voting power
-- `getPastVotes` - Get historical votes
-- `getDelegate` - Get delegate address
-- `delegate` - Delegate voting power
-
-### Infrared (Liquid Staking)
-- `getIbgtBalance` - Get iBGT balance
-- `getIbgtPrice` - Get iBGT/BGT rate
-- `stakeBgt` - Stake BGT for iBGT
-- `unstakeIbgt` - Unstake iBGT for BGT
-- `getPendingRewards` - Get pending rewards
-- `claimRewards` - Claim rewards
-
-### Multicall
-- `executeMulticall` - Execute multiple calls
-- `aggregate` - Batch view calls
-
-### Analytics
-- `getNetworkStats` - Get network statistics
-- `getGasStats` - Get gas statistics
-- `getPolStats` - Get PoL statistics
-- `getValidatorStats` - Get validator stats
-
-### Subgraph
-- `querySubgraph` - Execute GraphQL query
-- `getStatus` - Get subgraph status
-
-### Utility
-- `validateAddress` - Validate address
-- `checksumAddress` - Get checksum address
-- `convertUnits` - Convert units (wei/ether)
-- `hashData` - Hash data (keccak256)
-- `getChainId` - Get chain ID
-- `testConnection` - Test RPC connection
-
-## Trigger Events
-
-The Berachain Trigger node supports:
-
-- **New Block** - Trigger on each new block
-- **Pending Transaction** - Trigger on pending tx
-- **BGT Queued** - BGT boost queued
-- **BGT Activated** - BGT boost activated
-- **BGT Dropped** - BGT boost dropped
-- **BGT Delegated** - BGT delegation changed
-- **HONEY Minted** - HONEY minted
-- **HONEY Redeemed** - HONEY redeemed
-- **Reward Vault Staked** - Tokens staked in vault
-- **Reward Vault Withdrawn** - Tokens withdrawn
-- **Rewards Claimed** - BGT rewards claimed
-- **BEX Swap** - DEX swap executed
-- **Bend Supply** - Assets supplied to Bend
-- **Bend Borrow** - Assets borrowed from Bend
-- **Berps Position Opened** - Perp position opened
-- **Berps Position Closed** - Perp position closed
-- **Custom Contract Event** - Any contract event
-
-## Example Workflows
-
-### Monitor BGT Rewards
-
-```json
+```javascript
 {
-  "nodes": [
-    {
-      "name": "Berachain Trigger",
-      "type": "n8n-nodes-berachain.berachainTrigger",
-      "parameters": {
-        "event": "rewardsClaimed",
-        "vaultAddress": "0x..."
-      }
-    },
-    {
-      "name": "Slack",
-      "type": "n8n-nodes-base.slack",
-      "parameters": {
-        "channel": "#defi-alerts",
-        "text": "BGT rewards claimed: {{$json.args.amount}}"
-      }
-    }
-  ]
+  "operation": "voteOnProposal",
+  "proposalId": "prop_12345",
+  "vote": "yes",
+  "votingPower": "1000000",
+  "reason": "Supporting network upgrade for improved scalability"
 }
 ```
 
-### Auto-Compound BGT
+### Mint Honey Stablecoins
 
-```json
+```javascript
 {
-  "nodes": [
-    {
-      "name": "Schedule",
-      "type": "n8n-nodes-base.schedule",
-      "parameters": {
-        "rule": { "interval": [{ "hours": 24 }] }
-      }
-    },
-    {
-      "name": "Check Rewards",
-      "type": "n8n-nodes-berachain.berachain",
-      "parameters": {
-        "resource": "rewardVault",
-        "operation": "getEarned"
-      }
-    },
-    {
-      "name": "Claim Rewards",
-      "type": "n8n-nodes-berachain.berachain",
-      "parameters": {
-        "resource": "rewardVault",
-        "operation": "claimRewards"
-      }
-    }
-  ]
+  "operation": "mintHoney",
+  "collateralAmount": "500.0",
+  "collateralToken": "BERA",
+  "honeyAmount": "450.0",
+  "slippageTolerance": "0.5"
 }
 ```
 
-### Track HONEY Mints
+### Monitor Validator Performance
 
-```json
+```javascript
 {
-  "nodes": [
-    {
-      "name": "HONEY Trigger",
-      "type": "n8n-nodes-berachain.berachainTrigger",
-      "parameters": {
-        "event": "honeyMinted"
-      }
-    },
-    {
-      "name": "Google Sheets",
-      "type": "n8n-nodes-base.googleSheets",
-      "parameters": {
-        "operation": "append",
-        "sheetId": "...",
-        "values": {
-          "timestamp": "={{$json.blockNumber}}",
-          "amount": "={{$json.args.amount}}"
-        }
-      }
-    }
-  ]
+  "operation": "getValidatorInfo",
+  "validatorAddress": "beraval1x2y3z4...",
+  "includeMetrics": true,
+  "timeRange": "7d"
 }
 ```
 
-## Berachain Concepts
+### Execute DeFi Token Swap
 
-### Proof of Liquidity (PoL)
-
-Berachain's consensus mechanism where validators earn BGT rewards proportional to liquidity they attract:
-
-1. **Liquidity Providers** stake LP tokens in Reward Vaults
-2. **Reward Vaults** distribute BGT to stakers
-3. **Validators** configure Cutting Boards to direct BGT to vaults
-4. **BGT Holders** boost validators to increase their emissions
-
-### BGT (Bera Governance Token)
-
-- **Non-transferable** - Can only be earned, not bought
-- **Earned through** - Providing liquidity and staking in Reward Vaults
-- **Use cases** - Boost validators, delegate voting power, burn for BERA
-
-### HONEY
-
-Berachain's native overcollateralized stablecoin:
-
-- Mint with approved collateral (WBERA, WETH, WBTC, etc.)
-- Dynamic mint/redeem rates based on market conditions
-- Core to Berachain DeFi ecosystem
-
-### Reward Vaults
-
-Smart contracts that distribute BGT to LP token stakers:
-
-- Each vault accepts specific LP tokens
-- BGT rewards based on validator cutting board allocation
-- Users can stake, unstake, and claim rewards
+```javascript
+{
+  "operation": "swapTokens",
+  "fromToken": "BERA",
+  "toToken": "HONEY",
+  "amount": "100.0",
+  "slippage": "1.0",
+  "deadline": 1800
+}
+```
 
 ## Error Handling
 
-All operations return structured error responses:
-
-```json
-{
-  "success": false,
-  "error": {
-    "message": "Insufficient balance",
-    "code": "INSUFFICIENT_FUNDS",
-    "details": { ... }
-  }
-}
-```
-
-## Network Support
-
-| Network | Chain ID | Status |
-|---------|----------|--------|
-| Mainnet | 80094 | ✅ Supported |
-| Bartio Testnet | 80084 | ✅ Supported |
-| Custom | Any | ✅ Supported |
+| Error | Description | Solution |
+|-------|-------------|----------|
+| Invalid API Key | Authentication failed with provided credentials | Verify API key is correct and has proper permissions |
+| Insufficient Balance | Not enough tokens for the requested operation | Check wallet balance and ensure sufficient funds |
+| Network Timeout | Request timed out waiting for blockchain response | Retry operation or check network connectivity |
+| Invalid Proposal ID | Governance proposal not found or expired | Verify proposal ID and check if proposal is still active |
+| Validator Not Found | Specified validator does not exist | Confirm validator address is correct and validator is registered |
+| Slippage Exceeded | Token swap failed due to price movement | Increase slippage tolerance or retry with current prices |
 
 ## Development
 
 ```bash
-# Install dependencies
 npm install
-
-# Build
 npm run build
-
-# Lint
-npm run lint
-
-# Test
 npm test
-
-# Format
-npm run format
+npm run lint
+npm run dev
 ```
 
-## Support
+## Author
 
-- **Issues**: [GitHub Issues](https://github.com/velocitybpa/n8n-nodes-berachain/issues)
-- **Documentation**: [Berachain Docs](https://docs.berachain.com)
-- **Commercial Support**: Contact Velocity BPA
+**Velocity BPA**
+- Website: [velobpa.com](https://velobpa.com)
+- GitHub: [Velocity-BPA](https://github.com/Velocity-BPA)
+
+## Licensing
+
+This n8n community node is licensed under the **Business Source License 1.1**.
+
+### Free Use
+Permitted for personal, educational, research, and internal business use.
+
+### Commercial Use
+Use of this node within any SaaS, PaaS, hosted platform, managed service, or paid automation offering requires a commercial license.
+
+For licensing inquiries: **licensing@velobpa.com**
+
+See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LICENSING_FAQ.md](LICENSING_FAQ.md) for details.
 
 ## Contributing
 
-Contributions are welcome under the BSL 1.1 license terms. Please read our contributing guidelines before submitting PRs.
+Contributions are welcome! Please ensure:
 
-## Changelog
+1. Code follows existing style conventions
+2. All tests pass (`npm test`)
+3. Linting passes (`npm run lint`)
+4. Documentation is updated for new features
+5. Commit messages are descriptive
 
-### v1.0.0
+## Support
 
-- Initial release
-- 23 resource categories
-- 130+ operations
-- Real-time event triggers
-- Full PoL support
-
----
-
-**Built with ❤️ by Velocity BPA for the Berachain ecosystem**
+- **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-berachain/issues)
+- **Berachain Documentation**: [docs.berachain.com](https://docs.berachain.com)
+- **Berachain Community**: [Discord](https://discord.gg/berachain)
