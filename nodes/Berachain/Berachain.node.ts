@@ -41,7 +41,6 @@ export class Berachain implements INodeType {
       },
     ],
     properties: [
-      // Resource selector
       {
         displayName: 'Resource',
         name: 'resource',
@@ -63,11 +62,26 @@ export class Berachain implements INodeType {
           {
             name: 'DeFiAutomation',
             value: 'deFiAutomation',
+          },
+          {
+            name: 'Validators',
+            value: 'validators',
+          },
+          {
+            name: 'Governance',
+            value: 'governance',
+          },
+          {
+            name: 'Defi',
+            value: 'defi',
+          },
+          {
+            name: 'Automation',
+            value: 'automation',
           }
         ],
         default: 'bgtGovernance',
       },
-      // Operation dropdowns per resource
 {
   displayName: 'Operation',
   name: 'operation',
@@ -200,6 +214,30 @@ export class Berachain implements INodeType {
       value: 'getStabilityPool',
       description: 'Get stability pool information',
       action: 'Get stability pool',
+    },
+    {
+      name: 'Get HONEY Supply',
+      value: 'getHoneySupply',
+      description: 'Get total HONEY supply information',
+      action: 'Get HONEY supply',
+    },
+    {
+      name: 'Get Collateral Info',
+      value: 'getCollateralInfo',
+      description: 'Get collateral backing HONEY',
+      action: 'Get collateral info',
+    },
+    {
+      name: 'Get Stability Metrics',
+      value: 'getStabilityMetrics',
+      description: 'Get HONEY stability metrics',
+      action: 'Get stability metrics',
+    },
+    {
+      name: 'Get HONEY Positions',
+      value: 'getHoneyPositions',
+      description: 'Get user HONEY positions',
+      action: 'Get HONEY positions',
     },
   ],
   default: 'getSupply',
@@ -346,7 +384,104 @@ export class Berachain implements INodeType {
   ],
   default: 'getPools',
 },
-      // Parameter definitions
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['validators'] } },
+  options: [
+    { name: 'Get Validators', value: 'getValidators', description: 'Get list of all validators', action: 'Get validators' },
+    { name: 'Get Validator', value: 'getValidator', description: 'Get specific validator details', action: 'Get validator' },
+    { name: 'Create Validator', value: 'createValidator', description: 'Create new validator registration', action: 'Create validator' },
+    { name: 'Update Validator', value: 'updateValidator', description: 'Update validator configuration', action: 'Update validator' },
+    { name: 'Get Validator Delegations', value: 'getValidatorDelegations', description: 'Get validator delegations', action: 'Get validator delegations' },
+    { name: 'Get Validator Rewards', value: 'getValidatorRewards', description: 'Get validator rewards', action: 'Get validator rewards' }
+  ],
+  default: 'getValidators',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['governance'] } },
+  options: [
+    { name: 'Get Proposals', value: 'getProposals', description: 'Get governance proposals', action: 'Get governance proposals' },
+    { name: 'Get Proposal', value: 'getProposal', description: 'Get specific proposal details', action: 'Get specific proposal details' },
+    { name: 'Create Proposal', value: 'createProposal', description: 'Submit new governance proposal', action: 'Submit new governance proposal' },
+    { name: 'Vote Proposal', value: 'voteProposal', description: 'Vote on governance proposal', action: 'Vote on governance proposal' },
+    { name: 'Get Proposal Votes', value: 'getProposalVotes', description: 'Get proposal voting results', action: 'Get proposal voting results' },
+    { name: 'Get BGT Delegations', value: 'getBgtDelegations', description: 'Get BGT delegation info', action: 'Get BGT delegation info' }
+  ],
+  default: 'getProposals',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['defi'] } },
+  options: [
+    { name: 'Get Pools', value: 'getPools', description: 'Get liquidity pools information', action: 'Get liquidity pools' },
+    { name: 'Get Pool', value: 'getPool', description: 'Get specific pool details', action: 'Get pool details' },
+    { name: 'Add Liquidity', value: 'addLiquidity', description: 'Add liquidity to pool', action: 'Add liquidity to pool' },
+    { name: 'Remove Liquidity', value: 'removeLiquidity', description: 'Remove liquidity from pool', action: 'Remove liquidity from pool' },
+    { name: 'Execute Swap', value: 'executeSwap', description: 'Execute token swap', action: 'Execute token swap' },
+    { name: 'Get DeFi Positions', value: 'getDefiPositions', description: 'Get user DeFi positions', action: 'Get DeFi positions' }
+  ],
+  default: 'getPools',
+},
+{
+	displayName: 'Operation',
+	name: 'operation',
+	type: 'options',
+	noDataExpression: true,
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+		},
+	},
+	options: [
+		{
+			name: 'Get Strategies',
+			value: 'getStrategies',
+			description: 'Get automation strategies',
+			action: 'Get automation strategies',
+		},
+		{
+			name: 'Get Strategy',
+			value: 'getStrategy',
+			description: 'Get specific strategy details',
+			action: 'Get specific strategy details',
+		},
+		{
+			name: 'Create Strategy',
+			value: 'createStrategy',
+			description: 'Create new automation strategy',
+			action: 'Create new automation strategy',
+		},
+		{
+			name: 'Update Strategy',
+			value: 'updateStrategy',
+			description: 'Update automation strategy',
+			action: 'Update automation strategy',
+		},
+		{
+			name: 'Delete Strategy',
+			value: 'deleteStrategy',
+			description: 'Delete automation strategy',
+			action: 'Delete automation strategy',
+		},
+		{
+			name: 'Get Executions',
+			value: 'getExecutions',
+			description: 'Get strategy execution history',
+			action: 'Get strategy execution history',
+		},
+	],
+	default: 'getStrategies',
+},
 {
   displayName: 'Status',
   name: 'status',
@@ -591,7 +726,7 @@ export class Berachain implements INodeType {
   displayOptions: {
     show: {
       resource: ['honeyStablecoin'],
-      operation: ['getCollateral'],
+      operation: ['getCollateral', 'getCollateralInfo'],
     },
   },
   default: '',
@@ -654,6 +789,20 @@ export class Berachain implements INodeType {
   description: 'Amount of HONEY to burn',
 },
 {
+  displayName: 'Amount',
+  name: 'amount',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['honeyStablecoin'],
+      operation: ['mintHoney', 'burnHoney'],
+    },
+  },
+  default: '',
+  description: 'The amount of HONEY tokens to mint or burn',
+},
+{
   displayName: 'Address',
   name: 'address',
   type: 'string',
@@ -661,7 +810,7 @@ export class Berachain implements INodeType {
   displayOptions: {
     show: {
       resource: ['honeyStablecoin'],
-      operation: ['getPosition'],
+      operation: ['getPosition', 'getHoneyPositions'],
     },
   },
   default: '',
@@ -689,7 +838,7 @@ export class Berachain implements INodeType {
   displayOptions: {
     show: {
       resource: ['honeyStablecoin'],
-      operation: ['getLiquidations'],
+      operation: ['getLiquidations', 'getHoneyPositions'],
     },
   },
   default: 10,
@@ -736,6 +885,29 @@ export class Berachain implements INodeType {
   },
   default: '',
   description: 'Address of the liquidator',
+},
+{
+  displayName: 'Timeframe',
+  name: 'timeframe',
+  type: 'options',
+  options: [
+    { name: '1 Hour', value: '1h' },
+    { name: '24 Hours', value: '24h' },
+    { name: '7 Days', value: '7d' },
+    { name: '30 Days', value: '30d' },
+  ],
+  default: '24h',
+  displayOptions: { show: { resource: ['honeyStablecoin'], operation: ['getStabilityMetrics'] } },
+  description: 'The timeframe for stability metrics',
+},
+{
+  displayName: 'Page',
+  name: 'page',
+  type: 'number',
+  typeOptions: { minValue: 1 },
+  default: 1,
+  displayOptions: { show: { resource: ['honeyStablecoin'], operation: ['getHoneyPositions'] } },
+  description: 'Page number for pagination',
 },
 {
   displayName: 'Status',
@@ -1234,6 +1406,606 @@ export class Berachain implements INodeType {
   default: '',
   description: 'Staker address',
 },
+{
+  displayName: 'Status',
+  name: 'status',
+  type: 'options',
+  displayOptions: { show: { resource: ['validators'], operation: ['getValidators'] } },
+  options: [
+    { name: 'Active', value: 'active' },
+    { name: 'Inactive', value: 'inactive' },
+    { name: 'Jailed', value: 'jailed' },
+    { name: 'All', value: 'all' }
+  ],
+  default: 'all',
+  description: 'Filter validators by status',
+},
+{
+  displayName: 'Page',
+  name: 'page',
+  type: 'number',
+  displayOptions: { show: { resource: ['validators'], operation: ['getValidators', 'getValidatorDelegations'] } },
+  default: 1,
+  description: 'Page number for pagination',
+},
+{
+  displayName: 'Limit',
+  name: 'limit',
+  type: 'number',
+  displayOptions: { show: { resource: ['validators'], operation: ['getValidators', 'getValidatorDelegations'] } },
+  default: 100,
+  description: 'Number of items per page',
+},
+{
+  displayName: 'Address',
+  name: 'address',
+  type: 'string',
+  displayOptions: { show: { resource: ['validators'], operation: ['getValidator', 'updateValidator', 'getValidatorDelegations', 'getValidatorRewards'] } },
+  default: '',
+  required: true,
+  description: 'Validator address',
+},
+{
+  displayName: 'Operator Address',
+  name: 'operatorAddress',
+  type: 'string',
+  displayOptions: { show: { resource: ['validators'], operation: ['createValidator'] } },
+  default: '',
+  required: true,
+  description: 'Operator address for the validator',
+},
+{
+  displayName: 'Consensus Key',
+  name: 'consensusKey',
+  type: 'string',
+  displayOptions: { show: { resource: ['validators'], operation: ['createValidator'] } },
+  default: '',
+  required: true,
+  description: 'Consensus public key for the validator',
+},
+{
+  displayName: 'Commission',
+  name: 'commission',
+  type: 'number',
+  displayOptions: { show: { resource: ['validators'], operation: ['createValidator', 'updateValidator'] } },
+  default: 0.1,
+  description: 'Commission rate (0.0 to 1.0)',
+},
+{
+  displayName: 'Description',
+  name: 'description',
+  type: 'string',
+  displayOptions: { show: { resource: ['validators'], operation: ['updateValidator'] } },
+  default: '',
+  description: 'Validator description',
+},
+{
+  displayName: 'Epoch',
+  name: 'epoch',
+  type: 'number',
+  displayOptions: { show: { resource: ['validators'], operation: ['getValidatorRewards'] } },
+  default: 0,
+  description: 'Epoch number for rewards query',
+},
+{
+  displayName: 'Status',
+  name: 'status',
+  type: 'options',
+  displayOptions: { show: { resource: ['governance'], operation: ['getProposals'] } },
+  options: [
+    { name: 'Active', value: 'active' },
+    { name: 'Pending', value: 'pending' },
+    { name: 'Passed', value: 'passed' },
+    { name: 'Rejected', value: 'rejected' },
+    { name: 'All', value: 'all' }
+  ],
+  default: 'all',
+  description: 'Filter proposals by status'
+},
+{
+  displayName: 'Page',
+  name: 'page',
+  type: 'number',
+  displayOptions: { show: { resource: ['governance'], operation: ['getProposals', 'getProposalVotes'] } },
+  default: 1,
+  description: 'Page number for pagination'
+},
+{
+  displayName: 'Limit',
+  name: 'limit',
+  type: 'number',
+  displayOptions: { show: { resource: ['governance'], operation: ['getProposals', 'getProposalVotes'] } },
+  default: 20,
+  description: 'Number of items per page'
+},
+{
+  displayName: 'Proposal ID',
+  name: 'id',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['governance'], operation: ['getProposal', 'voteProposal', 'getProposalVotes'] } },
+  default: '',
+  description: 'ID of the governance proposal'
+},
+{
+  displayName: 'Title',
+  name: 'title',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['governance'], operation: ['createProposal'] } },
+  default: '',
+  description: 'Title of the governance proposal'
+},
+{
+  displayName: 'Description',
+  name: 'description',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['governance'], operation: ['createProposal'] } },
+  typeOptions: { rows: 4 },
+  default: '',
+  description: 'Description of the governance proposal'
+},
+{
+  displayName: 'Type',
+  name: 'type',
+  type: 'options',
+  required: true,
+  displayOptions: { show: { resource: ['governance'], operation: ['createProposal'] } },
+  options: [
+    { name: 'Text', value: 'text' },
+    { name: 'Parameter Change', value: 'parameter_change' },
+    { name: 'Community Pool Spend', value: 'community_pool_spend' },
+    { name: 'Software Upgrade', value: 'software_upgrade' }
+  ],
+  default: 'text',
+  description: 'Type of governance proposal'
+},
+{
+  displayName: 'Deposit',
+  name: 'deposit',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['governance'], operation: ['createProposal'] } },
+  default: '1000000',
+  description: 'Deposit amount for the proposal'
+},
+{
+  displayName: 'Vote Option',
+  name: 'option',
+  type: 'options',
+  required: true,
+  displayOptions: { show: { resource: ['governance'], operation: ['voteProposal'] } },
+  options: [
+    { name: 'Yes', value: 'yes' },
+    { name: 'No', value: 'no' },
+    { name: 'Abstain', value: 'abstain' },
+    { name: 'No With Veto', value: 'no_with_veto' }
+  ],
+  default: 'yes',
+  description: 'Vote option for the proposal'
+},
+{
+  displayName: 'Vote Weight',
+  name: 'weight',
+  type: 'string',
+  displayOptions: { show: { resource: ['governance'], operation: ['voteProposal'] } },
+  default: '1.0',
+  description: 'Weight of the vote (optional)'
+},
+{
+  displayName: 'Delegator',
+  name: 'delegator',
+  type: 'string',
+  displayOptions: { show: { resource: ['governance'], operation: ['getBgtDelegations'] } },
+  default: '',
+  description: 'Delegator address to filter delegations'
+},
+{
+  displayName: 'Validator',
+  name: 'validator',
+  type: 'string',
+  displayOptions: { show: { resource: ['governance'], operation: ['getBgtDelegations'] } },
+  default: '',
+  description: 'Validator address to filter delegations'
+},
+{
+  displayName: 'Protocol',
+  name: 'protocol',
+  type: 'string',
+  displayOptions: { show: { resource: ['defi'], operation: ['getPools', 'getDefiPositions'] } },
+  default: '',
+  description: 'Protocol name to filter pools or positions'
+},
+{
+  displayName: 'Asset',
+  name: 'asset',
+  type: 'string',
+  displayOptions: { show: { resource: ['defi'], operation: ['getPools'] } },
+  default: '',
+  description: 'Asset symbol to filter pools'
+},
+{
+  displayName: 'Page',
+  name: 'page',
+  type: 'number',
+  displayOptions: { show: { resource: ['defi'], operation: ['getPools', 'getDefiPositions'] } },
+  default: 1,
+  description: 'Page number for pagination'
+},
+{
+  displayName: 'Limit',
+  name: 'limit',
+  type: 'number',
+  displayOptions: { show: { resource: ['defi'], operation: ['getPools', 'getDefiPositions'] } },
+  default: 20,
+  description: 'Number of items per page'
+},
+{
+  displayName: 'Pool ID',
+  name: 'id',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['getPool'] } },
+  default: '',
+  description: 'ID of the specific pool'
+},
+{
+  displayName: 'Pool ID',
+  name: 'poolId',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['addLiquidity', 'removeLiquidity'] } },
+  default: '',
+  description: 'ID of the pool'
+},
+{
+  displayName: 'Token A',
+  name: 'tokenA',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['addLiquidity'] } },
+  default: '',
+  description: 'Address of the first token'
+},
+{
+  displayName: 'Token B',
+  name: 'tokenB',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['addLiquidity'] } },
+  default: '',
+  description: 'Address of the second token'
+},
+{
+  displayName: 'Amount A',
+  name: 'amountA',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['addLiquidity'] } },
+  default: '',
+  description: 'Amount of token A to add'
+},
+{
+  displayName: 'Amount B',
+  name: 'amountB',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['addLiquidity'] } },
+  default: '',
+  description: 'Amount of token B to add'
+},
+{
+  displayName: 'Liquidity Amount',
+  name: 'liquidityAmount',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['removeLiquidity'] } },
+  default: '',
+  description: 'Amount of liquidity tokens to remove'
+},
+{
+  displayName: 'Token In',
+  name: 'tokenIn',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['executeSwap'] } },
+  default: '',
+  description: 'Address of the input token'
+},
+{
+  displayName: 'Token Out',
+  name: 'tokenOut',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['executeSwap'] } },
+  default: '',
+  description: 'Address of the output token'
+},
+{
+  displayName: 'Amount In',
+  name: 'amountIn',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['executeSwap'] } },
+  default: '',
+  description: 'Amount of input tokens'
+},
+{
+  displayName: 'Slippage',
+  name: 'slippage',
+  type: 'number',
+  displayOptions: { show: { resource: ['defi'], operation: ['executeSwap'] } },
+  default: 0.5,
+  description: 'Maximum slippage tolerance percentage'
+},
+{
+  displayName: 'Address',
+  name: 'address',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['defi'], operation: ['getDefiPositions'] } },
+  default: '',
+  description: 'Wallet address to get positions for'
+},
+{
+	displayName: 'Strategy Type',
+	name: 'type',
+	type: 'options',
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['getStrategies'],
+		},
+	},
+	options: [
+		{
+			name: 'All',
+			value: '',
+		},
+		{
+			name: 'DCA',
+			value: 'dca',
+		},
+		{
+			name: 'Yield Farming',
+			value: 'yield_farming',
+		},
+		{
+			name: 'Arbitrage',
+			value: 'arbitrage',
+		},
+		{
+			name: 'Rebalancing',
+			value: 'rebalancing',
+		},
+	],
+	default: '',
+	description: 'Filter by strategy type',
+},
+{
+	displayName: 'Status',
+	name: 'status',
+	type: 'options',
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['getStrategies'],
+		},
+	},
+	options: [
+		{
+			name: 'All',
+			value: '',
+		},
+		{
+			name: 'Active',
+			value: 'active',
+		},
+		{
+			name: 'Paused',
+			value: 'paused',
+		},
+		{
+			name: 'Completed',
+			value: 'completed',
+		},
+		{
+			name: 'Failed',
+			value: 'failed',
+		},
+	],
+	default: '',
+	description: 'Filter by status',
+},
+{
+	displayName: 'Page',
+	name: 'page',
+	type: 'number',
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['getStrategies', 'getExecutions'],
+		},
+	},
+	default: 1,
+	description: 'Page number for pagination',
+},
+{
+	displayName: 'Limit',
+	name: 'limit',
+	type: 'number',
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['getStrategies', 'getExecutions'],
+		},
+	},
+	default: 100,
+	description: 'Number of results per page',
+},
+{
+	displayName: 'Strategy ID',
+	name: 'strategyId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['getStrategy', 'updateStrategy', 'deleteStrategy'],
+		},
+	},
+	default: '',
+	description: 'The ID of the strategy',
+},
+{
+	displayName: 'Strategy Type',
+	name: 'strategyType',
+	type: 'options',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['createStrategy', 'updateStrategy'],
+		},
+	},
+	options: [
+		{
+			name: 'DCA',
+			value: 'dca',
+		},
+		{
+			name: 'Yield Farming',
+			value: 'yield_farming',
+		},
+		{
+			name: 'Arbitrage',
+			value: 'arbitrage',
+		},
+		{
+			name: 'Rebalancing',
+			value: 'rebalancing',
+		},
+	],
+	default: 'dca',
+	description: 'Type of automation strategy',
+},
+{
+	displayName: 'Triggers',
+	name: 'triggers',
+	type: 'json',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['createStrategy', 'updateStrategy'],
+		},
+	},
+	default: '[]',
+	description: 'Array of trigger conditions for the strategy',
+},
+{
+	displayName: 'Actions',
+	name: 'actions',
+	type: 'json',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['createStrategy', 'updateStrategy'],
+		},
+	},
+	default: '[]',
+	description: 'Array of actions to execute when triggers are met',
+},
+{
+	displayName: 'Parameters',
+	name: 'parameters',
+	type: 'json',
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['createStrategy'],
+		},
+	},
+	default: '{}',
+	description: 'Strategy-specific parameters and configuration',
+},
+{
+	displayName: 'Strategy Status',
+	name: 'strategyStatus',
+	type: 'options',
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['updateStrategy'],
+		},
+	},
+	options: [
+		{
+			name: 'Active',
+			value: 'active',
+		},
+		{
+			name: 'Paused',
+			value: 'paused',
+		},
+		{
+			name: 'Completed',
+			value: 'completed',
+		},
+	],
+	default: 'active',
+	description: 'Status of the strategy',
+},
+{
+	displayName: 'Strategy ID Filter',
+	name: 'strategyIdFilter',
+	type: 'string',
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['getExecutions'],
+		},
+	},
+	default: '',
+	description: 'Filter executions by strategy ID',
+},
+{
+	displayName: 'Execution Status',
+	name: 'executionStatus',
+	type: 'options',
+	displayOptions: {
+		show: {
+			resource: ['automation'],
+			operation: ['getExecutions'],
+		},
+	},
+	options: [
+		{
+			name: 'All',
+			value: '',
+		},
+		{
+			name: 'Pending',
+			value: 'pending',
+		},
+		{
+			name: 'Executing',
+			value: 'executing',
+		},
+		{
+			name: 'Completed',
+			value: 'completed',
+		},
+		{
+			name: 'Failed',
+			value: 'failed',
+		},
+	],
+	default: '',
+	description: 'Filter by execution status',
+},
     ],
   };
 
@@ -1250,6 +2022,14 @@ export class Berachain implements INodeType {
         return [await executeValidatorOperationsOperations.call(this, items)];
       case 'deFiAutomation':
         return [await executeDeFiAutomationOperations.call(this, items)];
+      case 'validators':
+        return [await executeValidatorsOperations.call(this, items)];
+      case 'governance':
+        return [await executeGovernanceOperations.call(this, items)];
+      case 'defi':
+        return [await executeDefiOperations.call(this, items)];
+      case 'automation':
+        return [await executeAutomationOperations.call(this, items)];
       default:
         throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not supported`);
     }
@@ -1262,989 +2042,3 @@ export class Berachain implements INodeType {
 
 async function executeBgtGovernanceOperations(
   this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('berachainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getValidators': {
-          const status = this.getNodeParameter('status', i) as string;
-          const limit = this.getNodeParameter('limit', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-
-          const queryParams = new URLSearchParams();
-          if (status && status !== 'all') queryParams.append('status', status);
-          if (limit) queryParams.append('limit', limit.toString());
-          if (offset) queryParams.append('offset', offset.toString());
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/bgt/validators?${queryParams.toString()}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getValidator': {
-          const address = this.getNodeParameter('address', i) as string;
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/bgt/validators/${address}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getDelegations': {
-          const address = this.getNodeParameter('address', i) as string;
-          const validator = this.getNodeParameter('validator', i) as string;
-
-          const queryParams = new URLSearchParams();
-          if (validator) queryParams.append('validator', validator);
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/bgt/delegations/${address}?${queryParams.toString()}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'delegateBgt': {
-          const validator = this.getNodeParameter('validator', i) as string;
-          const amount = this.getNodeParameter('amount', i) as string;
-          const delegator = this.getNodeParameter('delegator', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/bgt/delegate`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              validator,
-              amount,
-              delegator,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'undelegateBgt': {
-          const validator = this.getNodeParameter('validator', i) as string;
-          const amount = this.getNodeParameter('amount', i) as string;
-          const delegator = this.getNodeParameter('delegator', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/bgt/undelegate`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              validator,
-              amount,
-              delegator,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getRewards': {
-          const address = this.getNodeParameter('address', i) as string;
-          const validator = this.getNodeParameter('validator', i) as string;
-
-          const queryParams = new URLSearchParams();
-          if (validator) queryParams.append('validator', validator);
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/bgt/rewards/${address}?${queryParams.toString()}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'claimRewards': {
-          const address = this.getNodeParameter('address', i) as string;
-          const validators = this.getNodeParameter('validators', i) as string;
-
-          const body: any = { address };
-          if (validators) {
-            body.validators = validators.split(',').map((v: string) => v.trim());
-          }
-
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/bgt/claim-rewards`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body,
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getProposals': {
-          const status = this.getNodeParameter('status', i) as string;
-          const limit = this.getNodeParameter('limit', i) as number;
-
-          const queryParams = new URLSearchParams();
-          if (status && status !== 'all') queryParams.append('status', status);
-          if (limit) queryParams.append('limit', limit.toString());
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/bgt/proposals?${queryParams.toString()}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'voteProposal': {
-          const proposalId = this.getNodeParameter('proposalId', i) as string;
-          const vote = this.getNodeParameter('vote', i) as string;
-          const voter = this.getNodeParameter('voter', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/bgt/vote`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              proposalId,
-              vote,
-              voter,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error, { itemIndex: i });
-        } else {
-          throw new NodeOperationError(this.getNode(), error.message, { itemIndex: i });
-        }
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeHoneyStablecoinOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('berachainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getSupply': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/honey/supply`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getCollateral': {
-          const asset = this.getNodeParameter('asset', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/honey/collateral`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              asset: asset,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'mintHoney': {
-          const collateralAmount = this.getNodeParameter('collateralAmount', i) as string;
-          const collateralAsset = this.getNodeParameter('collateralAsset', i) as string;
-          const recipient = this.getNodeParameter('recipient', i) as string;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/honey/mint`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              collateralAmount: collateralAmount,
-              collateralAsset: collateralAsset,
-              recipient: recipient,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'burnHoney': {
-          const honeyAmount = this.getNodeParameter('honeyAmount', i) as string;
-          const collateralAsset = this.getNodeParameter('collateralAsset', i) as string;
-          const recipient = this.getNodeParameter('recipient', i) as string;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/honey/burn`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              honeyAmount: honeyAmount,
-              collateralAsset: collateralAsset,
-              recipient: recipient,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getPosition': {
-          const address = this.getNodeParameter('address', i) as string;
-          const asset = this.getNodeParameter('asset', i, '') as string;
-          
-          const queryParams: any = {};
-          if (asset) {
-            queryParams.asset = asset;
-          }
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/honey/positions/${address}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: queryParams,
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getLiquidations': {
-          const limit = this.getNodeParameter('limit', i, 10) as number;
-          const minRatio = this.getNodeParameter('minRatio', i, '') as string;
-          
-          const queryParams: any = {
-            limit: limit,
-          };
-          if (minRatio) {
-            queryParams.minRatio = minRatio;
-          }
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/honey/liquidations`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            qs: queryParams,
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'liquidatePosition': {
-          const positionId = this.getNodeParameter('positionId', i) as string;
-          const liquidator = this.getNodeParameter('liquidator', i) as string;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/honey/liquidate`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              positionId: positionId,
-              liquidator: liquidator,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getPrice': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/honey/price`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getStabilityPool': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/honey/stability-pool`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeValidatorOperationsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('berachainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'getAllValidators': {
-          const status = this.getNodeParameter('status', i) as string;
-          const sortBy = this.getNodeParameter('sortBy', i) as string;
-          const limit = this.getNodeParameter('limit', i) as number;
-
-          const queryParams: any = {};
-          if (status !== 'all') queryParams.status = status;
-          if (sortBy) queryParams.sort_by = sortBy;
-          if (limit) queryParams.limit = limit.toString();
-
-          const queryString = new URLSearchParams(queryParams).toString();
-          const url = `${credentials.baseUrl}/validators${queryString ? `?${queryString}` : ''}`;
-
-          const options: any = {
-            method: 'GET',
-            url,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getValidatorDetails': {
-          const address = this.getNodeParameter('address', i) as string;
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/validators/${address}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'registerValidator': {
-          const address = this.getNodeParameter('address', i) as string;
-          const moniker = this.getNodeParameter('moniker', i) as string;
-          const commission = this.getNodeParameter('commission', i) as string;
-          const details = this.getNodeParameter('details', i) as string;
-
-          const body: any = {
-            address,
-            moniker,
-            commission,
-          };
-          if (details) body.details = details;
-
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/validators/register`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'updateValidator': {
-          const address = this.getNodeParameter('address', i) as string;
-          const commission = this.getNodeParameter('commission', i) as string;
-          const details = this.getNodeParameter('details', i) as string;
-
-          const body: any = {};
-          if (commission) body.commission = commission;
-          if (details) body.details = details;
-
-          const options: any = {
-            method: 'PUT',
-            url: `${credentials.baseUrl}/validators/${address}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getValidatorPerformance': {
-          const address = this.getNodeParameter('address', i) as string;
-          const period = this.getNodeParameter('period', i) as string;
-
-          const queryParams = new URLSearchParams({ period });
-          const url = `${credentials.baseUrl}/validators/${address}/performance?${queryParams.toString()}`;
-
-          const options: any = {
-            method: 'GET',
-            url,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getValidatorDelegators': {
-          const address = this.getNodeParameter('address', i) as string;
-          const limit = this.getNodeParameter('limit', i) as number;
-
-          const queryParams = new URLSearchParams();
-          if (limit) queryParams.append('limit', limit.toString());
-
-          const url = `${credentials.baseUrl}/validators/${address}/delegators${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-
-          const options: any = {
-            method: 'GET',
-            url,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'unjailValidator': {
-          const address = this.getNodeParameter('address', i) as string;
-          const reason = this.getNodeParameter('reason', i) as string;
-
-          const body: any = {};
-          if (reason) body.reason = reason;
-
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/validators/${address}/unjail`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getValidatorRewards': {
-          const validator = this.getNodeParameter('validator', i) as string;
-          const period = this.getNodeParameter('period', i) as string;
-
-          const queryParams = new URLSearchParams({ period });
-          if (validator) queryParams.append('validator', validator);
-
-          const url = `${credentials.baseUrl}/validators/rewards?${queryParams.toString()}`;
-
-          const options: any = {
-            method: 'GET',
-            url,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getSlashingEvents': {
-          const validator = this.getNodeParameter('validator', i) as string;
-          const limit = this.getNodeParameter('limit', i) as number;
-
-          const queryParams = new URLSearchParams();
-          if (validator) queryParams.append('validator', validator);
-          if (limit) queryParams.append('limit', limit.toString());
-
-          const url = `${credentials.baseUrl}/validators/slashing${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-
-          const options: any = {
-            method: 'GET',
-            url,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error);
-        }
-        throw new NodeOperationError(this.getNode(), error.message);
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeDeFiAutomationOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('berachainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getPools': {
-          const protocol = this.getNodeParameter('protocol', i) as string;
-          const asset = this.getNodeParameter('asset', i) as string;
-          const minTvl = this.getNodeParameter('minTvl', i) as number;
-          
-          const queryParams: any = {};
-          if (protocol) queryParams.protocol = protocol;
-          if (asset) queryParams.asset = asset;
-          if (minTvl > 0) queryParams.minTvl = minTvl.toString();
-          
-          const queryString = Object.keys(queryParams).length > 0 
-            ? '?' + new URLSearchParams(queryParams).toString() 
-            : '';
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/defi/pools${queryString}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getPool': {
-          const id = this.getNodeParameter('id', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/defi/pools/${id}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'addLiquidity': {
-          const poolId = this.getNodeParameter('poolId', i) as string;
-          const tokenA = this.getNodeParameter('tokenA', i) as string;
-          const tokenB = this.getNodeParameter('tokenB', i) as string;
-          const amountA = this.getNodeParameter('amountA', i) as string;
-          const amountB = this.getNodeParameter('amountB', i) as string;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/defi/add-liquidity`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              poolId,
-              tokenA,
-              tokenB,
-              amountA,
-              amountB,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'removeLiquidity': {
-          const poolId = this.getNodeParameter('poolId', i) as string;
-          const lpTokens = this.getNodeParameter('lpTokens', i) as string;
-          const recipient = this.getNodeParameter('recipient', i) as string;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/defi/remove-liquidity`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              poolId,
-              lpTokens,
-              recipient,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getPositions': {
-          const address = this.getNodeParameter('address', i) as string;
-          const protocol = this.getNodeParameter('protocol', i) as string;
-          
-          const queryParams: any = {};
-          if (protocol) queryParams.protocol = protocol;
-          
-          const queryString = Object.keys(queryParams).length > 0 
-            ? '?' + new URLSearchParams(queryParams).toString() 
-            : '';
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/defi/positions/${address}${queryString}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'executeSwap': {
-          const tokenIn = this.getNodeParameter('tokenIn', i) as string;
-          const tokenOut = this.getNodeParameter('tokenOut', i) as string;
-          const amountIn = this.getNodeParameter('amountIn', i) as string;
-          const recipient = this.getNodeParameter('recipient', i) as string;
-          const slippage = this.getNodeParameter('slippage', i) as number;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/defi/swap`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              tokenIn,
-              tokenOut,
-              amountIn,
-              recipient,
-              slippage,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getYieldOpportunities': {
-          const minApy = this.getNodeParameter('minApy', i) as number;
-          const asset = this.getNodeParameter('asset', i) as string;
-          const protocol = this.getNodeParameter('protocol', i) as string;
-          
-          const queryParams: any = {};
-          if (minApy > 0) queryParams.minApy = minApy.toString();
-          if (asset) queryParams.asset = asset;
-          if (protocol) queryParams.protocol = protocol;
-          
-          const queryString = Object.keys(queryParams).length > 0 
-            ? '?' + new URLSearchParams(queryParams).toString() 
-            : '';
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/defi/yields${queryString}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'stakeTokens': {
-          const protocol = this.getNodeParameter('protocol', i) as string;
-          const pool = this.getNodeParameter('pool', i) as string;
-          const amount = this.getNodeParameter('amount', i) as string;
-          const staker = this.getNodeParameter('staker', i) as string;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/defi/stake`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              protocol,
-              pool,
-              amount,
-              staker,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'unstakeTokens': {
-          const protocol = this.getNodeParameter('protocol', i) as string;
-          const pool = this.getNodeParameter('pool', i) as string;
-          const amount = this.getNodeParameter('amount', i) as string;
-          const staker = this.getNodeParameter('staker', i) as string;
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/defi/unstake`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: {
-              protocol,
-              pool,
-              amount,
-              staker,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getDeFiRewards': {
-          const address = this.getNodeParameter('address', i) as string;
-          const protocol = this.getNodeParameter('protocol', i) as string;
-          
-          const queryParams: any = {};
-          if (protocol) queryParams.protocol = protocol;
-          
-          const queryString = Object.keys(queryParams).length > 0 
-            ? '?' + new URLSearchParams(queryParams).toString() 
-            : '';
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/defi/rewards/${address}${queryString}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-      
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error);
-        } else {
-          throw new NodeOperationError(this.getNode(), error.message);
-        }
-      }
-    }
-  }
-  
-  return returnData;
-}
