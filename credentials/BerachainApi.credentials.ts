@@ -1,7 +1,4 @@
-import {
-	ICredentialType,
-	INodeProperties,
-} from 'n8n-workflow';
+import { ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class BerachainApi implements ICredentialType {
 	name = 'berachainApi';
@@ -16,16 +13,14 @@ export class BerachainApi implements ICredentialType {
 				password: true,
 			},
 			default: '',
-			required: true,
-			description: 'Your Berachain API key for authentication',
+			description: 'API key for Berachain. Get your API key from the Berachain developer portal.',
 		},
 		{
 			displayName: 'API Base URL',
 			name: 'baseUrl',
 			type: 'string',
-			default: 'https://artio.api.berachain.com/v1',
-			required: true,
-			description: 'The base URL for Berachain API endpoints',
+			default: 'https://api.berachain.com/v1',
+			description: 'Base URL for the Berachain API',
 		},
 	];
 }
