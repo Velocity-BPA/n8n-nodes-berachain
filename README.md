@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-The official n8n community node for Berachain, providing 4 comprehensive resources for automating BGT governance, Honey stablecoin operations, validator management, and DeFi protocols on the Berachain blockchain.
+A comprehensive n8n community node for integrating with Berachain blockchain network. This node provides 5 core resources enabling validators monitoring, governance participation, HoneyStablecoin operations, DeFi protocols interaction, and automated blockchain workflows for the Berachain ecosystem.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![Berachain](https://img.shields.io/badge/Berachain-Supported-orange)
-![BGT](https://img.shields.io/badge/BGT-Governance-green)
-![Honey](https://img.shields.io/badge/Honey-Stablecoin-yellow)
+![Berachain](https://img.shields.io/badge/Berachain-Network-orange)
+![Web3](https://img.shields.io/badge/Web3-Integration-green)
+![DeFi](https://img.shields.io/badge/DeFi-Ready-purple)
 
 ## Features
 
-- **BGT Governance** - Vote on proposals, delegate stakes, and manage governance participation
-- **Honey Stablecoin Operations** - Mint, redeem, and monitor Honey stablecoin transactions
-- **Validator Management** - Automate validator operations, monitor performance, and handle delegations
-- **DeFi Protocol Integration** - Interact with Berachain's native DeFi protocols and liquidity pools
-- **Real-time Monitoring** - Track blockchain events, validator status, and governance activities
-- **Multi-chain Support** - Compatible with Berachain testnet and mainnet environments
-- **Advanced Error Handling** - Comprehensive error management with detailed logging
-- **Flexible Authentication** - Secure API key-based authentication for all operations
+- **Validator Management** - Monitor validator performance, stake amounts, and delegation rewards
+- **Governance Integration** - Vote on proposals, create governance submissions, and track voting results
+- **HoneyStablecoin Operations** - Mint, burn, transfer, and monitor Honey stablecoin transactions
+- **DeFi Protocol Access** - Interact with Berachain's native DeFi protocols and liquidity pools
+- **Automated Workflows** - Create sophisticated blockchain automation with conditional logic
+- **Real-time Monitoring** - Track network events, transaction confirmations, and block updates
+- **Multi-signature Support** - Handle complex wallet operations and multi-sig transactions
+- **Gas Optimization** - Intelligent fee estimation and transaction optimization
 
 ## Installation
 
@@ -61,105 +61,110 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| API Key | Your Berachain API key for authentication | Yes |
-| Network | Target network (testnet/mainnet) | Yes |
-| Wallet Address | Your wallet address for operations | Yes |
-| Private Key | Private key for transaction signing (encrypted) | Yes |
+| API Key | Your Berachain API access key for authenticated requests | Yes |
+| Network | Berachain network (mainnet, testnet) | Yes |
+| Wallet Address | Primary wallet address for operations (optional for read-only) | No |
+| Private Key | Wallet private key for transaction signing (encrypted) | No |
 
 ## Resources & Operations
 
-### 1. BGT Governance
+### 1. Validators
 
 | Operation | Description |
 |-----------|-------------|
-| Get Proposals | Retrieve active and historical governance proposals |
-| Vote on Proposal | Cast votes on governance proposals |
-| Delegate Stake | Delegate BGT tokens to validators |
-| Get Voting Power | Check current voting power and delegations |
-| Create Proposal | Submit new governance proposals |
-| Get Proposal Details | Retrieve detailed information about specific proposals |
+| Get Validator | Retrieve detailed information about a specific validator |
+| List Validators | Get all validators with filtering and pagination |
+| Get Validator Performance | Fetch performance metrics and statistics |
+| Get Delegations | Retrieve delegation information for a validator |
+| Get Rewards | Get staking rewards and distribution data |
+| Delegate Tokens | Delegate tokens to a validator |
+| Undelegate Tokens | Remove delegation from a validator |
+| Claim Rewards | Claim accumulated staking rewards |
 
-### 2. Honey Stablecoin
-
-| Operation | Description |
-|-----------|-------------|
-| Mint Honey | Mint new Honey stablecoins using collateral |
-| Redeem Honey | Redeem Honey tokens for underlying collateral |
-| Get Balance | Check Honey token balance for addresses |
-| Transfer Honey | Send Honey tokens between addresses |
-| Get Collateral Ratio | Monitor collateralization ratios |
-| Get Minting History | Retrieve historical minting and redemption data |
-
-### 3. Validator Operations
+### 2. Governance
 
 | Operation | Description |
 |-----------|-------------|
-| Get Validator Info | Retrieve validator details and performance metrics |
-| Register Validator | Register a new validator on the network |
-| Update Validator | Update validator configuration and metadata |
-| Get Delegations | View delegations to specific validators |
-| Claim Rewards | Claim validator and delegation rewards |
-| Monitor Status | Check validator online status and performance |
+| Get Proposal | Retrieve details of a governance proposal |
+| List Proposals | Get all governance proposals with status filtering |
+| Create Proposal | Submit a new governance proposal |
+| Vote on Proposal | Cast a vote on an active proposal |
+| Get Votes | Retrieve voting information for a proposal |
+| Get Voting Power | Check voting power for an address |
+| Get Proposal Results | Get final voting results and outcome |
 
-### 4. DeFi Automation
+### 3. HoneyStablecoin
 
 | Operation | Description |
 |-----------|-------------|
-| Add Liquidity | Add liquidity to Berachain DEX pools |
-| Remove Liquidity | Remove liquidity from pools |
-| Swap Tokens | Execute token swaps on native DEX |
-| Get Pool Info | Retrieve liquidity pool information and stats |
-| Stake Tokens | Stake tokens in yield farming protocols |
-| Harvest Rewards | Collect farming and staking rewards |
-| Get Portfolio | View complete DeFi portfolio summary |
+| Get Balance | Check HONEY token balance for an address |
+| Transfer Tokens | Send HONEY tokens to another address |
+| Mint Tokens | Mint new HONEY tokens (if authorized) |
+| Burn Tokens | Burn existing HONEY tokens |
+| Get Transaction | Retrieve transaction details by hash |
+| Get Transaction History | Get transaction history for an address |
+| Check Allowance | Check token allowance between addresses |
+| Approve Spending | Approve token spending for another address |
+
+### 4. Defi
+
+| Operation | Description |
+|-----------|-------------|
+| Get Pool Info | Retrieve information about liquidity pools |
+| Add Liquidity | Add tokens to a liquidity pool |
+| Remove Liquidity | Remove tokens from a liquidity pool |
+| Swap Tokens | Execute token swaps through DEX |
+| Get Price | Get current token prices and exchange rates |
+| Get Pool Rewards | Retrieve liquidity mining rewards |
+| Claim Pool Rewards | Claim accumulated DeFi rewards |
+| Get Portfolio | Get complete DeFi portfolio overview |
+
+### 5. Automation
+
+| Operation | Description |
+|-----------|-------------|
+| Create Trigger | Set up blockchain event triggers |
+| Monitor Address | Watch address for transaction activity |
+| Schedule Transaction | Schedule delayed transaction execution |
+| Get Network Status | Check network health and status |
+| Estimate Gas | Calculate gas fees for transactions |
+| Batch Transactions | Execute multiple transactions in sequence |
+| Get Block Info | Retrieve blockchain block information |
+| Watch Events | Monitor smart contract events |
 
 ## Usage Examples
 
-### Vote on BGT Governance Proposal
-
 ```javascript
+// Monitor validator performance
 {
-  "operation": "voteOnProposal",
-  "proposalId": "prop_12345",
+  "validator_address": "beravaloper1abc123...",
+  "include_delegations": true,
+  "time_period": "7d"
+}
+
+// Vote on governance proposal
+{
+  "proposal_id": "42",
   "vote": "yes",
-  "votingPower": "1000000",
-  "reason": "Supporting network upgrade for improved scalability"
+  "voter_address": "bera1xyz789...",
+  "memo": "Supporting network upgrade"
 }
-```
 
-### Mint Honey Stablecoins
-
-```javascript
+// Swap tokens through DeFi
 {
-  "operation": "mintHoney",
-  "collateralAmount": "500.0",
-  "collateralToken": "BERA",
-  "honeyAmount": "450.0",
-  "slippageTolerance": "0.5"
-}
-```
-
-### Monitor Validator Performance
-
-```javascript
-{
-  "operation": "getValidatorInfo",
-  "validatorAddress": "beraval1x2y3z4...",
-  "includeMetrics": true,
-  "timeRange": "7d"
-}
-```
-
-### Execute DeFi Token Swap
-
-```javascript
-{
-  "operation": "swapTokens",
-  "fromToken": "BERA",
-  "toToken": "HONEY",
-  "amount": "100.0",
-  "slippage": "1.0",
+  "from_token": "HONEY",
+  "to_token": "BERA",
+  "amount": "100",
+  "slippage_tolerance": "0.5",
   "deadline": 1800
+}
+
+// Set up automated staking rewards claim
+{
+  "trigger_type": "rewards_threshold",
+  "threshold_amount": "50",
+  "validator_address": "beravaloper1def456...",
+  "auto_restake": true
 }
 ```
 
@@ -168,11 +173,11 @@ n8n start
 | Error | Description | Solution |
 |-------|-------------|----------|
 | Invalid API Key | Authentication failed with provided credentials | Verify API key is correct and has proper permissions |
-| Insufficient Balance | Not enough tokens for the requested operation | Check wallet balance and ensure sufficient funds |
-| Network Timeout | Request timed out waiting for blockchain response | Retry operation or check network connectivity |
-| Invalid Proposal ID | Governance proposal not found or expired | Verify proposal ID and check if proposal is still active |
-| Validator Not Found | Specified validator does not exist | Confirm validator address is correct and validator is registered |
-| Slippage Exceeded | Token swap failed due to price movement | Increase slippage tolerance or retry with current prices |
+| Insufficient Balance | Wallet doesn't have enough tokens for operation | Check balance and ensure adequate funds |
+| Network Congestion | Transaction failed due to network issues | Retry with higher gas fees or wait for network recovery |
+| Invalid Address | Provided wallet or contract address is malformed | Validate address format matches Berachain standards |
+| Gas Estimation Failed | Unable to estimate transaction gas costs | Check network status and transaction parameters |
+| Proposal Not Found | Governance proposal ID doesn't exist | Verify proposal ID and check if proposal is active |
 
 ## Development
 
@@ -218,4 +223,4 @@ Contributions are welcome! Please ensure:
 
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-berachain/issues)
 - **Berachain Documentation**: [docs.berachain.com](https://docs.berachain.com)
-- **Berachain Community**: [Discord](https://discord.gg/berachain)
+- **Developer Portal**: [developers.berachain.com](https://developers.berachain.com)
