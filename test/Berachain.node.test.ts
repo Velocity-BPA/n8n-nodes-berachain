@@ -33,20 +33,20 @@ describe('Berachain Node', () => {
       expect(node.description.outputs).toContain('main');
     });
 
-    it('should define 4 resources', () => {
+    it('should define 5 resources', () => {
       const resourceProp = node.description.properties.find(
         (p: any) => p.name === 'resource'
       );
       expect(resourceProp).toBeDefined();
       expect(resourceProp!.type).toBe('options');
-      expect(resourceProp!.options).toHaveLength(4);
+      expect(resourceProp!.options).toHaveLength(5);
     });
 
     it('should have operation dropdowns for each resource', () => {
       const operations = node.description.properties.filter(
         (p: any) => p.name === 'operation'
       );
-      expect(operations.length).toBe(4);
+      expect(operations.length).toBe(5);
     });
 
     it('should require credentials', () => {
@@ -67,192 +67,236 @@ describe('Berachain Node', () => {
   });
 
   // Resource-specific tests
-describe('BgtGovernance Resource', () => {
+describe('Validators Resource', () => {
   let mockExecuteFunctions: any;
 
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://artio.api.berachain.com/v1',
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://api.berachain.com/v1' 
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
+      helpers: { 
         httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
+        requestWithAuthentication: jest.fn() 
       },
     };
   });
 
-  test('getValidators should return validators list', async () => {
-    const mockValidators = {
-      validators: [
-        { address: '0x123', name: 'Validator 1', status: 'active' },
-        { address: '0x456', name: 'Validator 2', status: 'active' }
-      ]
-    };
+  it('should get validators successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getValidators')
+      .mockReturnValueOnce('active')
+      .mockReturnValueOnce(1)
+      .mockReturnValueOnce(10);
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getValidators';
-      if (param === 'status') return 'active';
-      if (param === 'limit') return 100;
-      if (param === 'offset') return 0;
-      return '';
-    });
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ validators: [] });
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockValidators);
-
-    const result = await executeBgtGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockValidators);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+    const result = await executeValidatorsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(expect.objectContaining({
       method: 'GET',
-      url: 'https://artio.api.berachain.com/v1/bgt/validators?status=active&limit=100&offset=0',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
+      url: 'https://api.berachain.com/v1/validators'
+    }));
+    expect(result).toEqual([{ json: { validators: [] }, pairedItem: { item: 0 } }]);
   });
 
-  test('getValidator should return specific validator details', async () => {
-    const mockValidator = {
-      address: '0x123',
-      name: 'Test Validator',
-      commission: '5%',
-      totalStaked: '1000000'
-    };
+  it('should get specific validator successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getValidator')
+      .mockReturnValueOnce('validator123');
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getValidator';
-      if (param === 'address') return '0x123';
-      return '';
-    });
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ address: 'validator123' });
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockValidator);
-
-    const result = await executeBgtGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockValidator);
+    const result = await executeValidatorsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(expect.objectContaining({
+      method: 'GET',
+      url: 'https://api.berachain.com/v1/validators/validator123'
+    }));
+    expect(result).toEqual([{ json: { address: 'validator123' }, pairedItem: { item: 0 } }]);
   });
 
-  test('delegateBgt should delegate BGT to validator', async () => {
-    const mockResponse = {
-      success: true,
-      transactionHash: '0xabc123',
-      delegatedAmount: '1000000'
-    };
+  it('should create validator successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('createValidator')
+      .mockReturnValueOnce('operator123')
+      .mockReturnValueOnce('consensus_key')
+      .mockReturnValueOnce(0.1);
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'delegateBgt';
-      if (param === 'validator') return '0x123';
-      if (param === 'amount') return '1000000';
-      if (param === 'delegator') return '0x456';
-      return '';
-    });
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ success: true });
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeBgtGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+    const result = await executeValidatorsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(expect.objectContaining({
       method: 'POST',
-      url: 'https://artio.api.berachain.com/v1/bgt/delegate',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      body: {
-        validator: '0x123',
-        amount: '1000000',
-        delegator: '0x456',
-      },
-      json: true,
-    });
+      url: 'https://api.berachain.com/v1/validators',
+      body: { operatorAddress: 'operator123', consensusKey: 'consensus_key', commission: 0.1 }
+    }));
+    expect(result).toEqual([{ json: { success: true }, pairedItem: { item: 0 } }]);
   });
 
-  test('getProposals should return governance proposals', async () => {
-    const mockProposals = {
-      proposals: [
-        { id: '1', title: 'Proposal 1', status: 'active' },
-        { id: '2', title: 'Proposal 2', status: 'active' }
-      ]
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getProposals';
-      if (param === 'status') return 'active';
-      if (param === 'limit') return 50;
-      return '';
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockProposals);
-
-    const result = await executeBgtGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockProposals);
-  });
-
-  test('voteProposal should vote on governance proposal', async () => {
-    const mockResponse = {
-      success: true,
-      transactionHash: '0xdef456',
-      vote: 'yes'
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'voteProposal';
-      if (param === 'proposalId') return '1';
-      if (param === 'vote') return 'yes';
-      if (param === 'voter') return '0x789';
-      return '';
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeBgtGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'POST',
-      url: 'https://artio.api.berachain.com/v1/bgt/vote',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      body: {
-        proposalId: '1',
-        vote: 'yes',
-        voter: '0x789',
-      },
-      json: true,
-    });
-  });
-
-  test('should handle errors correctly', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getValidators';
-      return '';
-    });
-
-    const mockError = new Error('API request failed');
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+  it('should handle errors gracefully', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('getValidators');
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
     mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-    const result = await executeBgtGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    const result = await executeValidatorsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    
+    expect(result).toEqual([{ json: { error: 'API Error' }, pairedItem: { item: 0 } }]);
+  });
+});
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual({ error: 'API request failed' });
+describe('Governance Resource', () => {
+  let mockExecuteFunctions: any;
+
+  beforeEach(() => {
+    mockExecuteFunctions = {
+      getNodeParameter: jest.fn(),
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://api.berachain.com/v1' 
+      }),
+      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+      continueOnFail: jest.fn().mockReturnValue(false),
+      helpers: { 
+        httpRequest: jest.fn(),
+        requestWithAuthentication: jest.fn() 
+      },
+    };
+  });
+
+  it('should get governance proposals successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getProposals')
+      .mockReturnValueOnce('active')
+      .mockReturnValueOnce(1)
+      .mockReturnValueOnce(20);
+
+    const mockResponse = { proposals: [{ id: '1', title: 'Test Proposal' }] };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toEqual([{
+      json: mockResponse,
+      pairedItem: { item: 0 }
+    }]);
+  });
+
+  it('should get specific proposal successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getProposal')
+      .mockReturnValueOnce('1');
+
+    const mockResponse = { id: '1', title: 'Test Proposal', status: 'active' };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toEqual([{
+      json: mockResponse,
+      pairedItem: { item: 0 }
+    }]);
+  });
+
+  it('should create proposal successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('createProposal')
+      .mockReturnValueOnce('Test Proposal')
+      .mockReturnValueOnce('Test Description')
+      .mockReturnValueOnce('text')
+      .mockReturnValueOnce('1000000');
+
+    const mockResponse = { id: '2', title: 'Test Proposal', status: 'pending' };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toEqual([{
+      json: mockResponse,
+      pairedItem: { item: 0 }
+    }]);
+  });
+
+  it('should vote on proposal successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('voteProposal')
+      .mockReturnValueOnce('1')
+      .mockReturnValueOnce('yes')
+      .mockReturnValueOnce('1.0');
+
+    const mockResponse = { success: true, vote_id: 'vote_123' };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toEqual([{
+      json: mockResponse,
+      pairedItem: { item: 0 }
+    }]);
+  });
+
+  it('should get proposal votes successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getProposalVotes')
+      .mockReturnValueOnce('1')
+      .mockReturnValueOnce(1)
+      .mockReturnValueOnce(20);
+
+    const mockResponse = { votes: [{ voter: 'addr1', option: 'yes' }] };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toEqual([{
+      json: mockResponse,
+      pairedItem: { item: 0 }
+    }]);
+  });
+
+  it('should get BGT delegations successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getBgtDelegations')
+      .mockReturnValueOnce('delegator_addr')
+      .mockReturnValueOnce('validator_addr');
+
+    const mockResponse = { delegations: [{ amount: '1000', validator: 'validator_addr' }] };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+    const result = await executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toEqual([{
+      json: mockResponse,
+      pairedItem: { item: 0 }
+    }]);
+  });
+
+  it('should handle API errors gracefully when continueOnFail is true', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('getProposals');
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+
+    const result = await executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toEqual([{
+      json: { error: 'API Error' },
+      pairedItem: { item: 0 }
+    }]);
+  });
+
+  it('should throw error when continueOnFail is false', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('getProposals');
+    mockExecuteFunctions.continueOnFail.mockReturnValue(false);
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+
+    await expect(executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]))
+      .rejects.toThrow('API Error');
   });
 });
 
@@ -262,619 +306,435 @@ describe('HoneyStablecoin Resource', () => {
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://artio.api.berachain.com/v1',
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://api.berachain.com/v1' 
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
+      helpers: { 
         httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
+        requestWithAuthentication: jest.fn() 
       },
     };
   });
 
   it('should get HONEY supply successfully', async () => {
-    const mockSupplyData = {
-      totalSupply: '1000000000000000000000',
-      circulatingSupply: '900000000000000000000',
-      stabilityPoolBalance: '100000000000000000000',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getSupply';
-      return undefined;
+    mockExecuteFunctions.getNodeParameter.mockReturnValue('getHoneySupply');
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      totalSupply: '1000000',
+      circulatingSupply: '900000',
     });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockSupplyData);
 
     const result = await executeHoneyStablecoinOperations.call(
       mockExecuteFunctions,
-      [{ json: {} }]
+      [{ json: {} }],
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockSupplyData);
+    expect(result[0].json.totalSupply).toBe('1000000');
   });
 
-  it('should get collateral information successfully', async () => {
-    const mockCollateralData = {
-      asset: 'WBERA',
-      totalCollateral: '500000000000000000000',
-      collateralRatio: '150',
-      liquidationThreshold: '110',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getCollateral';
-      if (param === 'asset') return 'WBERA';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockCollateralData);
-
-    const result = await executeHoneyStablecoinOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockCollateralData);
-  });
-
-  it('should mint HONEY successfully', async () => {
-    const mockMintData = {
-      transactionHash: '0x123456789',
-      honeyMinted: '100000000000000000000',
-      collateralUsed: '150000000000000000000',
-      newCollateralRatio: '150',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string, index: number) => {
-      if (param === 'operation') return 'mintHoney';
-      if (param === 'collateralAmount') return '150000000000000000000';
-      if (param === 'collateralAsset') return 'WBERA';
-      if (param === 'recipient') return '0x742d35Cc6610C7532C8cc2f7e4b8e8b8b64c9f5e';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockMintData);
-
-    const result = await executeHoneyStablecoinOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockMintData);
-  });
-
-  it('should get user position successfully', async () => {
-    const mockPositionData = {
-      address: '0x742d35Cc6610C7532C8cc2f7e4b8e8b8b64c9f5e',
-      collateralBalance: '200000000000000000000',
-      honeyDebt: '100000000000000000000',
-      collateralRatio: '200',
-      healthFactor: '2.0',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string, index: number, defaultValue?: any) => {
-      if (param === 'operation') return 'getPosition';
-      if (param === 'address') return '0x742d35Cc6610C7532C8cc2f7e4b8e8b8b64c9f5e';
-      if (param === 'asset') return '';
-      return defaultValue;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockPositionData);
-
-    const result = await executeHoneyStablecoinOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockPositionData);
-  });
-
-  it('should handle API errors gracefully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockReturnValue('getSupply');
+  it('should handle getHoneySupply error', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValue('getHoneySupply');
     mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
     mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
     const result = await executeHoneyStablecoinOperations.call(
       mockExecuteFunctions,
-      [{ json: {} }]
+      [{ json: {} }],
     );
 
     expect(result).toHaveLength(1);
     expect(result[0].json.error).toBe('API Error');
   });
 
-  it('should liquidate position successfully', async () => {
-    const mockLiquidationData = {
-      transactionHash: '0x987654321',
-      positionId: 'pos_123',
-      liquidatedCollateral: '50000000000000000000',
-      liquidationReward: '5000000000000000000',
-      liquidator: '0x742d35Cc6610C7532C8cc2f7e4b8e8b8b64c9f5e',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string, index: number) => {
-      if (param === 'operation') return 'liquidatePosition';
-      if (param === 'positionId') return 'pos_123';
-      if (param === 'liquidator') return '0x742d35Cc6610C7532C8cc2f7e4b8e8b8b64c9f5e';
-      return undefined;
+  it('should get collateral info successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getCollateralInfo')
+      .mockReturnValueOnce('WETH');
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      asset: 'WETH',
+      collateralRatio: '150%',
+      totalCollateral: '500000',
     });
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockLiquidationData);
-
     const result = await executeHoneyStablecoinOperations.call(
       mockExecuteFunctions,
-      [{ json: {} }]
+      [{ json: {} }],
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockLiquidationData);
+    expect(result[0].json.asset).toBe('WETH');
   });
 
-  it('should get HONEY price successfully', async () => {
-    const mockPriceData = {
-      price: '1.00',
-      priceUSD: '1.00',
-      pegStability: '99.8%',
-      volume24h: '1000000000000000000000',
-      marketCap: '1000000000000000000000',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockReturnValue('getPrice');
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockPriceData);
+  it('should mint HONEY successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('mintHoney')
+      .mockReturnValueOnce('1000')
+      .mockReturnValueOnce('WETH')
+      .mockReturnValueOnce('2000');
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      txHash: '0x123...',
+      amount: '1000',
+      status: 'pending',
+    });
 
     const result = await executeHoneyStablecoinOperations.call(
       mockExecuteFunctions,
-      [{ json: {} }]
+      [{ json: {} }],
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockPriceData);
-  });
-});
-
-describe('ValidatorOperations Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://artio.api.berachain.com/v1',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
+    expect(result[0].json.amount).toBe('1000');
   });
 
-  test('getAllValidators should fetch all validators successfully', async () => {
-    const mockResponse = {
-      validators: [
-        {
-          address: 'beravaloper1xxx',
-          moniker: 'Test Validator',
-          status: 'active',
-          voting_power: '1000000',
-        },
-      ],
+  it('should burn HONEY successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('burnHoney')
+      .mockReturnValueOnce('500')
+      .mockReturnValueOnce('0x456...');
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      txHash: '0x789...',
+      amount: '500',
+      status: 'confirmed',
+    });
+
+    const result = await executeHoneyStablecoinOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.amount).toBe('500');
+  });
+
+  it('should get stability metrics successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getStabilityMetrics')
+      .mockReturnValueOnce('24h');
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      peg: '0.998',
+      volatility: '0.02%',
+      timeframe: '24h',
+    });
+
+    const result = await executeHoneyStablecoinOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.peg).toBe('0.998');
+  });
+
+  it('should get HONEY positions successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getHoneyPositions')
+      .mockReturnValueOnce('0xabc...')
+      .mockReturnValueOnce(1)
+      .mockReturnValueOnce(50);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      positions: [{ id: '1', balance: '1000' }],
       total: 1,
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-      switch (name) {
-        case 'operation': return 'getAllValidators';
-        case 'status': return 'all';
-        case 'sortBy': return 'voting_power';
-        case 'limit': return 100;
-        default: return undefined;
-      }
+      page: 1,
     });
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeValidatorOperationsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    const result = await executeHoneyStablecoinOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
 
     expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://artio.api.berachain.com/v1/validators?sort_by=voting_power&limit=100',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
+    expect(result[0].json.positions).toHaveLength(1);
   });
 
-  test('getValidatorDetails should fetch validator details successfully', async () => {
-    const mockResponse = {
-      address: 'beravaloper1xxx',
-      moniker: 'Test Validator',
-      status: 'active',
-      commission: '0.1',
-      voting_power: '1000000',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-      switch (name) {
-        case 'operation': return 'getValidatorDetails';
-        case 'address': return 'beravaloper1xxx';
-        default: return undefined;
-      }
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeValidatorOperationsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://artio.api.berachain.com/v1/validators/beravaloper1xxx',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
-  });
-
-  test('registerValidator should register validator successfully', async () => {
-    const mockResponse = {
-      success: true,
-      tx_hash: '0xabc123',
-      validator: {
-        address: 'beravaloper1xxx',
-        moniker: 'New Validator',
-      },
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-      switch (name) {
-        case 'operation': return 'registerValidator';
-        case 'address': return 'beravaloper1xxx';
-        case 'moniker': return 'New Validator';
-        case 'commission': return '0.1';
-        case 'details': return 'Test validator details';
-        default: return undefined;
-      }
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeValidatorOperationsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'POST',
-      url: 'https://artio.api.berachain.com/v1/validators/register',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      body: {
-        address: 'beravaloper1xxx',
-        moniker: 'New Validator',
-        commission: '0.1',
-        details: 'Test validator details',
-      },
-      json: true,
-    });
-  });
-
-  test('getValidatorPerformance should fetch performance metrics successfully', async () => {
-    const mockResponse = {
-      validator: 'beravaloper1xxx',
-      period: '24h',
-      uptime: 0.99,
-      blocks_signed: 8640,
-      blocks_missed: 86,
-      performance_score: 95.5,
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-      switch (name) {
-        case 'operation': return 'getValidatorPerformance';
-        case 'address': return 'beravaloper1xxx';
-        case 'period': return '24h';
-        default: return undefined;
-      }
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeValidatorOperationsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://artio.api.berachain.com/v1/validators/beravaloper1xxx/performance?period=24h',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    });
-  });
-
-  test('should handle API errors gracefully', async () => {
-    const mockError = new Error('API request failed');
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-      switch (name) {
-        case 'operation': return 'getAllValidators';
-        case 'status': return 'all';
-        case 'sortBy': return 'voting_power';
-        case 'limit': return 100;
-        default: return undefined;
-      }
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+  it('should throw error for unknown operation', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValue('unknownOperation');
 
     await expect(
-      executeValidatorOperationsOperations.call(mockExecuteFunctions, [{ json: {} }])
-    ).rejects.toThrow('API request failed');
-  });
-
-  test('should continue on fail when configured', async () => {
-    const mockError = new Error('API request failed');
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-      switch (name) {
-        case 'operation': return 'getAllValidators';
-        case 'status': return 'all';
-        case 'sortBy': return 'voting_power';
-        case 'limit': return 100;
-        default: return undefined;
-      }
-    });
-
-    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
-
-    const result = await executeValidatorOperationsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json.error).toBe('API request failed');
+      executeHoneyStablecoinOperations.call(mockExecuteFunctions, [{ json: {} }]),
+    ).rejects.toThrow('Unknown operation: unknownOperation');
   });
 });
 
-describe('DeFiAutomation Resource', () => {
+describe('Defi Resource', () => {
   let mockExecuteFunctions: any;
 
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://artio.api.berachain.com/v1',
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://api.berachain.com/v1' 
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
+      helpers: { 
         httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
+        requestWithAuthentication: jest.fn() 
       },
     };
   });
 
   describe('getPools operation', () => {
     it('should get pools successfully', async () => {
-      const mockResponse = {
-        pools: [
-          { id: '1', protocol: 'uniswap', tvl: '1000000' },
-          { id: '2', protocol: 'sushiswap', tvl: '500000' },
-        ],
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-        switch (name) {
-          case 'operation': return 'getPools';
-          case 'protocol': return 'uniswap';
-          case 'asset': return 'HONEY';
-          case 'minTvl': return 100000;
-          default: return undefined;
-        }
-      });
-
+      const mockResponse = { pools: [{ id: 'pool1', name: 'Test Pool' }] };
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('getPools')
+        .mockReturnValueOnce('uniswap')
+        .mockReturnValueOnce('ETH')
+        .mockReturnValueOnce(1)
+        .mockReturnValueOnce(20);
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeDeFiAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeDefiOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://artio.api.berachain.com/v1/defi/pools?protocol=uniswap&asset=HONEY&minTvl=100000',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'GET',
+          url: expect.stringContaining('/defi/pools'),
+        })
+      );
+    });
+
+    it('should handle errors gracefully', async () => {
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getPools');
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+      const result = await executeDefiOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(result[0].json.error).toBe('API Error');
+    });
+  });
+
+  describe('getPool operation', () => {
+    it('should get specific pool successfully', async () => {
+      const mockResponse = { id: 'pool1', name: 'Test Pool' };
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('getPool')
+        .mockReturnValueOnce('pool1');
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeDefiOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].json).toEqual(mockResponse);
     });
   });
 
   describe('addLiquidity operation', () => {
     it('should add liquidity successfully', async () => {
-      const mockResponse = {
-        transactionHash: '0x123...',
-        poolId: 'pool123',
-        lpTokensReceived: '100.5',
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-        switch (name) {
-          case 'operation': return 'addLiquidity';
-          case 'poolId': return 'pool123';
-          case 'tokenA': return '0xabc...';
-          case 'tokenB': return '0xdef...';
-          case 'amountA': return '1000';
-          case 'amountB': return '2000';
-          default: return undefined;
-        }
-      });
-
+      const mockResponse = { txHash: '0x123', status: 'pending' };
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('addLiquidity')
+        .mockReturnValueOnce('pool1')
+        .mockReturnValueOnce('0xTokenA')
+        .mockReturnValueOnce('0xTokenB')
+        .mockReturnValueOnce('1000')
+        .mockReturnValueOnce('1000');
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeDeFiAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeDefiOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://artio.api.berachain.com/v1/defi/add-liquidity',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        body: {
-          poolId: 'pool123',
-          tokenA: '0xabc...',
-          tokenB: '0xdef...',
-          amountA: '1000',
-          amountB: '2000',
-        },
-        json: true,
-      });
+      expect(result[0].json).toEqual(mockResponse);
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'POST',
+          url: expect.stringContaining('/defi/pools/add-liquidity'),
+        })
+      );
     });
   });
 
   describe('executeSwap operation', () => {
     it('should execute swap successfully', async () => {
-      const mockResponse = {
-        transactionHash: '0x456...',
-        amountOut: '950.5',
-        executedPrice: '0.95',
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-        switch (name) {
-          case 'operation': return 'executeSwap';
-          case 'tokenIn': return '0xabc...';
-          case 'tokenOut': return '0xdef...';
-          case 'amountIn': return '1000';
-          case 'recipient': return '0x123...';
-          case 'slippage': return 1.0;
-          default: return undefined;
-        }
-      });
-
+      const mockResponse = { txHash: '0x456', amountOut: '950' };
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('executeSwap')
+        .mockReturnValueOnce('0xTokenIn')
+        .mockReturnValueOnce('0xTokenOut')
+        .mockReturnValueOnce('1000')
+        .mockReturnValueOnce(0.5);
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeDeFiAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeDefiOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://artio.api.berachain.com/v1/defi/swap',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        body: {
-          tokenIn: '0xabc...',
-          tokenOut: '0xdef...',
-          amountIn: '1000',
-          recipient: '0x123...',
-          slippage: 1.0,
-        },
-        json: true,
-      });
+      expect(result[0].json).toEqual(mockResponse);
     });
   });
 
-  describe('getYieldOpportunities operation', () => {
-    it('should get yield opportunities successfully', async () => {
-      const mockResponse = {
-        opportunities: [
-          { protocol: 'compound', apy: 15.5, asset: 'HONEY' },
-          { protocol: 'aave', apy: 12.3, asset: 'USDC' },
-        ],
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-        switch (name) {
-          case 'operation': return 'getYieldOpportunities';
-          case 'minApy': return 10;
-          case 'asset': return 'HONEY';
-          case 'protocol': return 'compound';
-          default: return undefined;
-        }
-      });
-
+  describe('getDefiPositions operation', () => {
+    it('should get positions successfully', async () => {
+      const mockResponse = { positions: [{ poolId: 'pool1', amount: '500' }] };
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('getDefiPositions')
+        .mockReturnValueOnce('0x123...abc')
+        .mockReturnValueOnce('uniswap')
+        .mockReturnValueOnce(1)
+        .mockReturnValueOnce(20);
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeDeFiAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeDefiOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://artio.api.berachain.com/v1/defi/yields?minApy=10&asset=HONEY&protocol=compound',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
+      expect(result[0].json).toEqual(mockResponse);
     });
   });
+});
 
-  describe('error handling', () => {
-    it('should handle API errors', async () => {
-      const mockError = {
-        httpCode: 404,
-        message: 'Pool not found',
-      };
+describe('Automation Resource', () => {
+	let mockExecuteFunctions: any;
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-        switch (name) {
-          case 'operation': return 'getPool';
-          case 'id': return 'invalid-pool';
-          default: return undefined;
-        }
-      });
+	beforeEach(() => {
+		mockExecuteFunctions = {
+			getNodeParameter: jest.fn(),
+			getCredentials: jest.fn().mockResolvedValue({
+				apiKey: 'test-api-key',
+				baseUrl: 'https://api.berachain.com/v1',
+			}),
+			getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+			getNode: jest.fn().mockReturnValue({ name: 'Test Berachain Node' }),
+			continueOnFail: jest.fn().mockReturnValue(false),
+			helpers: {
+				httpRequest: jest.fn(),
+				requestWithAuthentication: jest.fn(),
+			},
+		};
+	});
 
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+	test('getStrategies operation should make correct API call', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getStrategies')
+			.mockReturnValueOnce('dca')
+			.mockReturnValueOnce('active')
+			.mockReturnValueOnce(1)
+			.mockReturnValueOnce(50);
 
-      await expect(
-        executeDeFiAutomationOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow();
-    });
+		const mockResponse = {
+			strategies: [
+				{ id: 'strategy-1', type: 'dca', status: 'active' },
+			],
+			pagination: { page: 1, limit: 50, total: 1 },
+		};
 
-    it('should continue on fail when enabled', async () => {
-      const mockError = new Error('Network error');
-      
-      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-      mockExecuteFunctions.getNodeParameter.mockImplementation((name: string) => {
-        if (name === 'operation') return 'getPools';
-        return undefined;
-      });
-      
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeDeFiAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
+		const result = await executeAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([{ json: { error: 'Network error' }, pairedItem: { item: 0 } }]);
-    });
-  });
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+			method: 'GET',
+			url: 'https://api.berachain.com/v1/automation/strategies?page=1&limit=50&type=dca&status=active',
+			headers: {
+				'Authorization': 'Bearer test-api-key',
+				'Content-Type': 'application/json',
+			},
+			json: true,
+		});
+		expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+	});
+
+	test('createStrategy operation should make correct API call', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('createStrategy')
+			.mockReturnValueOnce('dca')
+			.mockReturnValueOnce('[{"type": "price", "value": 1000}]')
+			.mockReturnValueOnce('[{"type": "buy", "amount": 100}]')
+			.mockReturnValueOnce('{"interval": "daily"}');
+
+		const mockResponse = {
+			id: 'new-strategy-id',
+			type: 'dca',
+			status: 'active',
+		};
+
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+		const result = await executeAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+			method: 'POST',
+			url: 'https://api.berachain.com/v1/automation/strategies',
+			headers: {
+				'Authorization': 'Bearer test-api-key',
+				'Content-Type': 'application/json',
+			},
+			body: {
+				type: 'dca',
+				triggers: [{ type: 'price', value: 1000 }],
+				actions: [{ type: 'buy', amount: 100 }],
+				parameters: { interval: 'daily' },
+			},
+			json: true,
+		});
+		expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+	});
+
+	test('should handle API errors correctly', async () => {
+		mockExecuteFunctions.getNodeParameter.mockReturnValue('getStrategies');
+		mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+		mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+		const result = await executeAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+		expect(result).toEqual([{ json: { error: 'API Error' }, pairedItem: { item: 0 } }]);
+	});
+
+	test('deleteStrategy operation should make correct API call', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('deleteStrategy')
+			.mockReturnValueOnce('strategy-123');
+
+		const mockResponse = { success: true };
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+		const result = await executeAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+			method: 'DELETE',
+			url: 'https://api.berachain.com/v1/automation/strategies/strategy-123',
+			headers: {
+				'Authorization': 'Bearer test-api-key',
+				'Content-Type': 'application/json',
+			},
+			json: true,
+		});
+		expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+	});
+
+	test('getExecutions operation should make correct API call', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getExecutions')
+			.mockReturnValueOnce('strategy-123')
+			.mockReturnValueOnce('completed')
+			.mockReturnValueOnce(1)
+			.mockReturnValueOnce(25);
+
+		const mockResponse = {
+			executions: [
+				{ id: 'exec-1', strategyId: 'strategy-123', status: 'completed' },
+			],
+			pagination: { page: 1, limit: 25, total: 1 },
+		};
+
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+		const result = await executeAutomationOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+			method: 'GET',
+			url: 'https://api.berachain.com/v1/automation/executions?page=1&limit=25&strategyId=strategy-123&status=completed',
+			headers: {
+				'Authorization': 'Bearer test-api-key',
+				'Content-Type': 'application/json',
+			},
+			json: true,
+		});
+		expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+	});
 });
 });
